@@ -28,4 +28,9 @@ interface DAO {
 //    fun expenseRead(fromDate: String, toDate: String):String
     @Query("SELECT SUM(amount) FROM budget_table WHERE amountStatus==2 AND date BETWEEN :fromDate AND :toDate")
     fun incomeRead(fromDate: String, toDate: String):String
+
+    @Query("SELECT SUM(amount) FROM budget_table WHERE amountStatus==1")
+    fun getExpense(): String
+    @Query("SELECT SUM(amount) FROM budget_table WHERE amountStatus==2")
+    fun getIncome(): String
 }

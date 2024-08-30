@@ -42,18 +42,21 @@ class MainActivity : AppCompatActivity() {
         initClick()
         initAdapter()
     }
-    @SuppressLint("SimpleDateFormat")
+    @SuppressLint("SimpleDateFormat", "SetTextI18n")
     private fun initClick(){
-        val sdf = SimpleDateFormat("dd/MM/yyyy")
-        fromDate = sdf.format(System.currentTimeMillis())
-        binding.txtFromDate.text = fromDate
-
-        toDate = sdf.format(System.currentTimeMillis())
-        binding.txtToDate.text = toDate
+//        val sdf = SimpleDateFormat("dd/MM/yyyy")
+//        fromDate = sdf.format(System.currentTimeMillis())
+//        binding.txtFromDate.text = fromDate
+//
+//        toDate = sdf.format(System.currentTimeMillis())
+//        binding.txtToDate.text = toDate
+        binding.txtFromDate.text = "Select Date"
+        binding.txtToDate.text = "Select Date"
 
         binding.txtApply.setOnClickListener {
             initDb(this)
             readList=db!!.dao().getDate(fromDate,toDate)
+            amountStatus()
             budgetAdapter.dataSetChanged(readList)
         }
         binding.fabAdd.setOnClickListener {
@@ -108,20 +111,32 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     override fun onResume() {
         initDb(this)
-        Log.e("TAG", "onResume: from Date $fromDate to Date$toDate")
         readList=db!!.dao().getData()
-        val expenseAmount = db!!.dao().expenseRead(fromDate,toDate)
-        //Log.e("TAG", "onResume: $expenseAmount")
-        binding.txtExpenseAmount.text="₹${expenseAmount}"
-        if (expenseAmount==null){
-            binding.txtExpenseAmount.text="₹0"
+        val expenseAmount = db!!.dao().getExpense()
+        binding.txtExpenseAmount.text = "₹${expenseAmount}"
+        if (expenseAmount == null) {
+            binding.txtExpenseAmount.text = "₹0"
         }
-        val incomeAmount = db!!.dao().incomeRead(fromDate,toDate)
-        binding.txtIncomeAmount.text="₹${incomeAmount}"
-        if (incomeAmount==null){
-            binding.txtIncomeAmount.text="₹0"
+        val incomeAmount = db!!.dao().getIncome()
+        binding.txtIncomeAmount.text = "₹${incomeAmount}"
+        if (incomeAmount == null) {
+            binding.txtIncomeAmount.text = "₹0"
         }
         budgetAdapter.dataSetChanged(readList)
         super.onResume()
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun amountStatus() {
+        val expenseAmount = db!!.dao().expenseRead(fromDate, toDate)
+        binding.txtExpenseAmount.text = "₹${expenseAmount}"
+        if (expenseAmount == null) {
+            binding.txtExpenseAmount.text = "₹0"
+        }
+        val incomeAmount = db!!.dao().incomeRead(fromDate, toDate)
+        binding.txtIncomeAmount.text = "₹${incomeAmount}"
+        if (incomeAmount == null) {
+            binding.txtIncomeAmount.text = "₹0"
+        }
     }
 }
