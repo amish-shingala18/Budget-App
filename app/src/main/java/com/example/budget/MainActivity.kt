@@ -1,8 +1,13 @@
+
+
 package com.example.budget
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.widget.SearchView.OnQueryTextListener
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -16,12 +21,14 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+@Suppress("SENSELESS_COMPARISON")
 class MainActivity : AppCompatActivity() {
     private var toDate: String=""
     private var fromDate: String=""
     private val calendar = Calendar.getInstance()
     private lateinit var binding : ActivityMainBinding
     private var readList = mutableListOf<BudgetEntity>()
+    private var filterList = listOf<BudgetEntity>()
     private lateinit var budgetAdapter: BudgetAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +42,20 @@ class MainActivity : AppCompatActivity() {
         initClick()
         initAdapter()
     }
+    @SuppressLint("SimpleDateFormat")
     private fun initClick(){
+        val sdf = SimpleDateFormat("dd/MM/yyyy")
+        fromDate = sdf.format(System.currentTimeMillis())
+        binding.txtFromDate.text = fromDate
+
+        toDate = sdf.format(System.currentTimeMillis())
+        binding.txtToDate.text = toDate
+
+        binding.txtApply.setOnClickListener {
+            initDb(this)
+            readList=db!!.dao().getDate(fromDate,toDate)
+            budgetAdapter.dataSetChanged(readList)
+        }
         binding.fabAdd.setOnClickListener {
             startActivity(Intent(this@MainActivity, AddEntryActivity::class.java))
         }
@@ -45,6 +65,19 @@ class MainActivity : AppCompatActivity() {
         binding.cvToDate.setOnClickListener {
             toDatePicker()
         }
+        binding.svCategory.setOnQueryTextListener(object : OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                return false
+            }
+            override fun onQueryTextChange(newText: String): Boolean {
+                filterList = readList.filter { budgetEntity ->
+                    budgetEntity.category.lowercase(Locale.getDefault()).
+                    contains(newText.lowercase(Locale.getDefault()))
+                }
+                budgetAdapter.search(filterList)
+                return false
+            }
+        })
     }
     private fun initAdapter(){
         budgetAdapter = BudgetAdapter(readList)
@@ -56,7 +89,7 @@ class MainActivity : AppCompatActivity() {
             selectedDate.set(year, month, dayOfMonth)
             val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
             fromDate = dateFormat.format(selectedDate.time)
-            binding.fromDate.text = fromDate
+            binding.txtFromDate.text = fromDate
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
         datePickerDialog.datePicker.maxDate = calendar.timeInMillis
         datePickerDialog.show()
@@ -66,15 +99,28 @@ class MainActivity : AppCompatActivity() {
             val selectedDate = Calendar.getInstance()
             selectedDate.set(year, month, dayOfMonth)
             val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-            toDate= dateFormat.format(selectedDate.time)
-            binding.toDate.text = toDate
+            toDate = dateFormat.format(selectedDate.time)
+            binding.txtToDate.text = toDate
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
         datePickerDialog.datePicker.maxDate = calendar.timeInMillis
         datePickerDialog.show()
     }
+    @SuppressLint("SetTextI18n")
     override fun onResume() {
         initDb(this)
+        Log.e("TAG", "onResume: from Date $fromDate to Date$toDate")
         readList=db!!.dao().getData()
+        val expenseAmount = db!!.dao().expenseRead(fromDate,toDate)
+        //Log.e("TAG", "onResume: $expenseAmount")
+        binding.txtExpenseAmount.text="₹${expenseAmount}"
+        if (expenseAmount==null){
+            binding.txtExpenseAmount.text="₹0"
+        }
+        val incomeAmount = db!!.dao().incomeRead(fromDate,toDate)
+        binding.txtIncomeAmount.text="₹${incomeAmount}"
+        if (incomeAmount==null){
+            binding.txtIncomeAmount.text="₹0"
+        }
         budgetAdapter.dataSetChanged(readList)
         super.onResume()
     }

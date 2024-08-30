@@ -34,13 +34,16 @@ class AddEntryActivity : AppCompatActivity() {
         getUpdateData()
         initClick()
     }
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "SimpleDateFormat")
     private fun initClick(){
         Log.e("TAG", "initClick: $getId")
         if(getId!=-1) {
             binding.txtEntry.text = "Update Entry"
             binding.btnSubmit.text = "Update"
         }
+        val sdf = SimpleDateFormat("dd/MM/yyyy")
+        entryCurrentDate = sdf.format(System.currentTimeMillis())
+        binding.txtDate.text = entryCurrentDate
         budgetStatus()
         binding.imgBack.setOnClickListener {
             finish()
@@ -68,7 +71,6 @@ class AddEntryActivity : AppCompatActivity() {
         }
         else{
             val budgetEntity = BudgetEntity(
-                id=getId,
                 category=category,
                 title=title,
                 amount=amount,
@@ -78,10 +80,13 @@ class AddEntryActivity : AppCompatActivity() {
             if(getId==-1){
                 initDb(this)
                 db!!.dao().insertData(budgetEntity)
+                finish()
             }
             else{
+                budgetEntity.id=getId
                 initDb(this)
                 db!!.dao().updateData(budgetEntity)
+                finish()
             }
         }
     }
@@ -115,7 +120,7 @@ class AddEntryActivity : AppCompatActivity() {
         val title = intent.getStringExtra("title")
         val amount = intent.getStringExtra("amount")
         val date = intent.getStringExtra("date")
-        amountStatus = intent.getIntExtra("amountStatus", 1)
+        amountStatus = intent.getIntExtra("amountStatus",1)
         if(amountStatus==1){
             binding.rbExpense.isChecked = true
         }

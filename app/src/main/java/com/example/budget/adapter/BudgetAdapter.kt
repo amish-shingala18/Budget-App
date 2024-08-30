@@ -18,6 +18,11 @@ class BudgetAdapter(private var list: MutableList<BudgetEntity>) : RecyclerView.
         var sampleBinding = HomeSampleBinding.bind(itemView)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    fun search(filterList: List <BudgetEntity>) {
+        list = filterList.toMutableList()
+        notifyDataSetChanged()
+    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BudgetViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.home_sample, parent, false)
         return BudgetViewHolder(view)

@@ -71,6 +71,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
+        app:endIconMode="clear_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout4">
@@ -90,6 +91,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
+        app:endIconMode="clear_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtCategoryLayout">
@@ -118,6 +120,7 @@
             android:id="@+id/txtAmountLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:endIconMode="clear_text"
             android:layout_marginEnd="5dp"
             android:layout_weight="1">
 
@@ -144,7 +147,10 @@
                 android:id="@+id/txtDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:gravity="center"
+                android:drawableStart="@drawable/calender"
+                android:drawableTint="@android:color/darker_gray"
+                android:drawablePadding="5dp"
                 android:text="29/08/24" />
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
