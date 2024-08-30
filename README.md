@@ -27,3 +27,10 @@ This app isn't just a tool – it's your personal financial assistant. Whether y
   <img src="https://github.com/user-attachments/assets/d81b93e8-42e0-4f5e-b2c9-8ed9b7f59327" width="200" height="400" alt="Add Transaction Screen"/>
   <img src="https://github.com/user-attachments/assets/758df4f0-ab53-46e4-83e0-49db55a8dca3" width="200" height="400" alt="Expense List Screen"/>
 </p>
+
+## 🎥 Screen Recording
+
+Check out the screen recording showcasing the app's features: [Watch Now] 
+
+https://github.com/user-attachments/assets/b76f5ff9-dc83-41c5-bb71-48e473812442
+
